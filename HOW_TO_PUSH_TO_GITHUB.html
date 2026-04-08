@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Push Claude Trading Bot to GitHub</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --text: #c9d1d9;
+    --dim: #8b949e;
+    --code-bg: #1f2428;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 40px 20px;
+    max-width: 860px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  h1 { font-size: 2rem; color: #fff; margin-bottom: 8px; }
+  h2 { font-size: 1.3rem; color: var(--accent); margin: 32px 0 12px; }
+  h3 { font-size: 1rem; color: var(--green); margin: 16px 0 8px; }
+  p  { color: var(--text); margin-bottom: 12px; }
+  a  { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    background: linear-gradient(135deg, #1c2333 0%, #0d1117 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .hero .badge { display: inline-block; background: var(--green); color: #000; font-weight: 700; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 16px; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero p { color: var(--dim); max-width: 580px; margin: 12px auto 0; }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .step-number {
+    position: absolute;
+    top: -14px;
+    left: 20px;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 2px 12px;
+    border-radius: 20px;
+  }
+
+  code, pre {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  }
+  .cmd {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    position: relative;
+    overflow-x: auto;
+  }
+  .cmd .prompt { color: var(--green); user-select: none; }
+  .cmd .comment { color: var(--dim); }
+  .cmd .keyword { color: var(--purple); }
+  .cmd .string { color: var(--yellow); }
+
+  .note {
+    background: #1c2333;
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: var(--dim);
+  }
+  .warn {
+    background: #261a0d;
+    border-left: 3px solid var(--yellow);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: #e3b341;
+  }
+  .success {
+    background: #0d2619;
+    border-left: 3px solid var(--green);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: #56d364;
+  }
+
+  .file-tree {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    font-size: 0.9rem;
+    line-height: 2;
+  }
+  .file-tree .folder { color: var(--accent); }
+  .file-tree .file   { color: var(--text); }
+  .file-tree .tag    { background: var(--surface); color: var(--dim); font-size: 0.75rem; padding: 1px 8px; border-radius: 10px; margin-left: 8px; }
+  .file-tree .new    { color: var(--green); font-size: 0.75rem; padding: 1px 8px; border-radius: 10px; margin-left: 8px; background: #0d2619; }
+
+  .platform-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: -1px;
+    margin-top: 16px;
+  }
+  .platform-tab {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 6px 16px;
+    border-radius: 6px 6px 0 0;
+    font-size: 0.85rem;
+    color: var(--dim);
+    cursor: pointer;
+  }
+  .platform-tab.active { background: var(--surface); color: var(--text); }
+
+  .platform-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 6px 0; padding-left: 28px; position: relative; }
+  .checklist li::before { content: "✅"; position: absolute; left: 0; }
+
+  footer { margin-top: 48px; text-align: center; color: var(--dim); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">⚡ STEP-BY-STEP GUIDE</div>
+  <h1>Push to GitHub</h1>
+  <p>Follow these steps to upload your Claude Trading Bot to GitHub so you can clone and run it on any machine, anytime.</p>
+</div>
+
+<!-- FILE OVERVIEW -->
+<h2>📁 What You Have</h2>
+<div class="file-tree">
+  <div><span class="folder">📁 claude-trading-bot/</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 trading_bot.py</span><span class="tag">main bot</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 requirements.txt</span><span class="tag">dependencies</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 run.sh</span><span class="tag">Mac/Linux launcher</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 run.bat</span><span class="tag">Windows launcher</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 .env.example</span><span class="tag">API key template</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 .gitignore</span><span class="tag">ignores .env secrets</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 README.md</span><span class="tag">documentation</span></div>
+</div>
+<div class="warn">⚠️ Your <code>.env</code> file (with your real API key) is in <code>.gitignore</code> — it will <strong>never</strong> be pushed to GitHub. Only <code>.env.example</code> (with a placeholder) gets pushed.</div>
+
+
+<!-- STEP 1 -->
+<div class="step">
+  <div class="step-number">STEP 1</div>
+  <h2 style="margin-top:8px">Create a GitHub Account (if you don't have one)</h2>
+  <p>Go to <a href="https://github.com/signup" target="_blank">github.com/signup</a> and create a free account.</p>
+  <div class="note">💡 Already have an account? Skip to Step 2.</div>
+</div>
+
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="step-number">STEP 2</div>
+  <h2 style="margin-top:8px">Create a New Repository on GitHub</h2>
+
+  <p><strong>1.</strong> Go to <a href="https://github.com/new" target="_blank">github.com/new</a></p>
+
+  <p><strong>2.</strong> Fill in the form:</p>
+  <div class="file-tree" style="line-height:2.2">
+    <div><span style="color:var(--dim)">Repository name:</span>  <span style="color:var(--green)">claude-trading-bot</span></div>
+    <div><span style="color:var(--dim)">Description:</span>       <span style="color:var(--text)">Claude-powered crypto paper trading bot with live terminal</span></div>
+    <div><span style="color:var(--dim)">Visibility:</span>        <span style="color:var(--accent)">⦿ Public</span>  <span style="color:var(--dim)">(or Private — your choice)</span></div>
+    <div><span style="color:var(--dim)">Initialize:</span>        <span style="color:var(--red)">✗ Do NOT check "Add a README"</span>  <span style="color:var(--dim)">(you already have one)</span></div>
+  </div>
+
+  <p style="margin-top:12px"><strong>3.</strong> Click the green <strong>"Create repository"</strong> button.</p>
+
+  <div class="note">📋 Copy the URL of your new repo — it will look like:<br>
+    <code>https://github.com/YOUR_USERNAME/claude-trading-bot.git</code>
+  </div>
+</div>
+
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="step-number">STEP 3</div>
+  <h2 style="margin-top:8px">Install Git (if not already installed)</h2>
+
+  <div class="platform-tabs">
+    <div class="platform-tab active">Mac</div>
+    <div class="platform-tab">Windows</div>
+    <div class="platform-tab">Linux</div>
+  </div>
+  <div class="platform-block">
+    <div class="cmd"><span class="prompt">$ </span><span class="comment"># Check if Git is installed</span><br>
+<span class="prompt">$ </span>git --version</div>
+    <div class="cmd"><span class="prompt">$ </span><span class="comment"># If not installed, install via Homebrew</span><br>
+<span class="prompt">$ </span>brew install git</div>
+    <p style="color:var(--dim); font-size:0.9rem">No Homebrew? Install it first: <a href="https://brew.sh" target="_blank">brew.sh</a></p>
+  </div>
+
+  <h3>Configure Git (first time only)</h3>
+  <div class="cmd">
+    <span class="prompt">$ </span>git config --global user.name <span class="string">"Your Name"</span><br>
+    <span class="prompt">$ </span>git config --global user.email <span class="string">"your@email.com"</span>
+  </div>
+</div>
+
+
+<!-- STEP 4 -->
+<div class="step">
+  <div class="step-number">STEP 4</div>
+  <h2 style="margin-top:8px">Move Your Files Into a Folder</h2>
+
+  <p>Create a new folder on your computer and put all the bot files into it:</p>
+  <div class="cmd">
+    <span class="prompt">$ </span>mkdir claude-trading-bot<br>
+    <span class="prompt">$ </span>cd claude-trading-bot<br>
+    <span class="comment"># Now copy all the downloaded files into this folder</span>
+  </div>
+
+  <p>Your folder should look like this:</p>
+  <div class="file-tree">
+    <div><span class="folder">📁 claude-trading-bot/</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 trading_bot.py</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 requirements.txt</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 run.sh</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 run.bat</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 .env.example</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 .gitignore</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">📄 README.md</span></div>
+  </div>
+</div>
+
+
+<!-- STEP 5 -->
+<div class="step">
+  <div class="step-number">STEP 5</div>
+  <h2 style="margin-top:8px">Initialize Git & Push to GitHub</h2>
+  <p>Run these commands <strong>in order</strong> inside your <code>claude-trading-bot</code> folder:</p>
+
+  <h3>① Initialize a git repository</h3>
+  <div class="cmd"><span class="prompt">$ </span>git init</div>
+
+  <h3>② Stage all files</h3>
+  <div class="cmd"><span class="prompt">$ </span>git add .</div>
+
+  <h3>③ Create your first commit</h3>
+  <div class="cmd"><span class="prompt">$ </span>git commit -m <span class="string">"🚀 Initial commit — Claude trading bot"</span></div>
+
+  <h3>④ Rename branch to main</h3>
+  <div class="cmd"><span class="prompt">$ </span>git branch -M main</div>
+
+  <h3>⑤ Connect to your GitHub repo</h3>
+  <div class="cmd">
+    <span class="prompt">$ </span>git remote add origin https://github.com/<span style="color:var(--yellow)">YOUR_USERNAME</span>/claude-trading-bot.git<br>
+    <span class="comment"># ↑ Replace YOUR_USERNAME with your actual GitHub username</span>
+  </div>
+
+  <h3>⑥ Push to GitHub</h3>
+  <div class="cmd"><span class="prompt">$ </span>git push -u origin main</div>
+
+  <div class="success">✅ Done! Your bot is now live at:<br>
+    <code>https://github.com/YOUR_USERNAME/claude-trading-bot</code>
+  </div>
+</div>
+
+
+<!-- STEP 6 — RUNNING ON ANY MACHINE -->
+<div class="step">
+  <div class="step-number">STEP 6</div>
+  <h2 style="margin-top:8px">Run On Any Machine, Anytime</h2>
+  <p>Whenever you want to use the bot on any computer:</p>
+
+  <h3>① Clone the repo</h3>
+  <div class="cmd"><span class="prompt">$ </span>git clone https://github.com/<span style="color:var(--yellow)">YOUR_USERNAME</span>/claude-trading-bot.git<br>
+<span class="prompt">$ </span>cd claude-trading-bot</div>
+
+  <h3>② Set up your API key</h3>
+  <div class="cmd">
+    <span class="prompt">$ </span>cp .env.example .env<br>
+    <span class="comment"># Open .env and replace the placeholder with your real key:</span><br>
+    <span class="comment"># ANTHROPIC_API_KEY=sk-ant-your-real-key-here</span>
+  </div>
+
+  <h3>③ Launch!</h3>
+  <div class="cmd">
+    <span class="comment"># Mac / Linux:</span><br>
+    <span class="prompt">$ </span>./run.sh<br><br>
+    <span class="comment"># Windows:</span><br>
+    <span class="prompt">$ </span>run.bat
+  </div>
+
+  <div class="note">💡 The launcher automatically installs dependencies and checks your API key before starting.</div>
+</div>
+
+
+<!-- STEP 7 — UPDATES -->
+<div class="step">
+  <div class="step-number">STEP 7</div>
+  <h2 style="margin-top:8px">Saving Future Changes to GitHub</h2>
+  <p>If you modify the bot and want to save changes:</p>
+  <div class="cmd">
+    <span class="prompt">$ </span>git add .<br>
+    <span class="prompt">$ </span>git commit -m <span class="string">"describe what you changed"</span><br>
+    <span class="prompt">$ </span>git push
+  </div>
+
+  <p>To pull the latest version on another machine:</p>
+  <div class="cmd"><span class="prompt">$ </span>git pull</div>
+</div>
+
+
+<!-- CHECKLIST -->
+<h2>✅ Final Checklist</h2>
+<ul class="checklist">
+  <li>GitHub account created</li>
+  <li>New repository created at github.com/new</li>
+  <li>All bot files are in your local folder</li>
+  <li>Git initialized and files committed</li>
+  <li>Pushed to GitHub with <code>git push -u origin main</code></li>
+  <li>Verified files appear on GitHub in browser</li>
+  <li><code>.env</code> is NOT in GitHub (only <code>.env.example</code>)</li>
+  <li>Can clone and run with <code>./run.sh</code> or <code>run.bat</code></li>
+</ul>
+
+<footer>
+  <p>Claude-Powered Crypto Trading Bot — Paper Trading Only</p>
+  <p style="margin-top:4px">Built with ❤️ using Claude AI + Python + Rich + Binance API</p>
+</footer>
+
+</body>
+</html>
